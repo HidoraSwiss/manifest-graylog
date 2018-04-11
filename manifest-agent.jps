@@ -4,7 +4,7 @@ name: Graylog add-on
 categories: ["apps/dev-and-admin-tools"]
 displayName: Graylog Add-on
 homepage: https://marketplace.graylog.org
-logo: https://raw.githubusercontent.com/HidoraSwiss/manifest-influxdb/master/images/telegraf.png
+logo: none
 description: |
  Install and configure rsyslog to send syslog into your your Graylog server 
  
