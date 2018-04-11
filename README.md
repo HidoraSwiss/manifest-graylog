@@ -15,7 +15,7 @@ To create an input, go to your Graylog Server (http://@IPpublic:9000), then *Sys
 
 
 
-If you want to collect the log of one of your environment, use the [manifest-agent.jps](manifest-agent.jps), then, specify the private IP of your Graylog Server (ex: 10.102.0.10) and the listenning port (ex: 2512)
+If you want to collect logs of one of your environment, use the [manifest-agent.jps](manifest-agent.jps), then, specify the private IP of your Graylog Server (ex: 10.102.0.10) and the listenning port (ex: 2512)
 
 
 
