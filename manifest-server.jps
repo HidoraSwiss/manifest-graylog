@@ -9,8 +9,8 @@ description: |
  Install Graylog server 
 
 globals:
-  PASSWORD_SECRET: ${fn.password(15)}
-  ROOT_PASSWORD_GRAYLOG: ${fn.password(15)}
+  PASSWORD_SECRET: ${fn.password(20)}
+  ROOT_PASSWORD_GRAYLOG: ${fn.password(20)}
 
 nodes: 
   - nodeType: centos7
@@ -52,7 +52,7 @@ onInstall:
       - rpm -Uvh https://packages.graylog2.org/repo/packages/graylog-2.4-repository_latest.rpm
       - yum install graylog-server -y
       - sed -i 's/password_secret =/password_secret =${globals.PASSWORD_SECRET}/g' /etc/graylog/server/server.conf
-      - sed -i 's/root_password_sha2 =/root_password_sha2 =`echo -n toto | sha256sum | awk '{print $1}'`/g' /etc/graylog/server/server.conf
+      - sed -i "s/root_password_sha2 =/root_password_sha2 =`echo -n ${globals.ROOT_PASSWORD_GRAYLOG} | sha256sum | awk '{print $1}'`/g" /etc/graylog/server/server.conf
       - sed -i "81 d" /etc/graylog/server/server.conf
       - echo "rest_listen_uri = http://${nodes.centos7.extips}:9000/api/" >> /etc/graylog/server/server.conf
       - echo "web_listen_uri = http://${nodes.centos7.extips}:9000/" >> /etc/graylog/server/server.conf
