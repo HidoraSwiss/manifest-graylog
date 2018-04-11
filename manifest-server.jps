@@ -1,0 +1,72 @@
+type: install
+version: 1.4
+name: Graylog Server
+categories: ["apps/dev-and-admin-tools"]
+displayName: Graylog Server
+homepage: https://www.graylog.org/
+logo: https://raw.githubusercontent.com/HidoraSwiss/manifest-graylog/master/images/graylog.png
+description: |
+ Install Graylog server 
+
+globals:
+  PASSWORD_SECRET: ${fn.password(15)}
+  ROOT_PASSWORD_GRAYLOG: ${fn.password(15)}
+
+nodes: 
+  - nodeType: centos7
+    displayName: graylog
+    count: 1
+    cloudlets: 40
+    extip: true
+
+onInstall:   
+  - log: Install MangoDB
+  - cmd[centos7]:
+    - yum update
+    - yum install nano -y 
+    - sudo yum install java-1.8.0-openjdk-headless.x86_64
+    - wget -P /etc/yum.repos.d/  https://raw.githubusercontent.com/HidoraSwiss/manifest-graylog/master/mongodb-org-3.6.repo
+    - yum install -y mongodb-org
+    - chkconfig mongod on
+    - systemctl daemon-reload
+    - systemctl enable mongod.service
+    - systemctl start mongod.service
+    - systemctl restart mongod.service
+    user: root
+    
+  - log: Install ElasticSearch
+  - cmd[centos7]:
+      - rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
+      - wget -P /etc/yum.repos.d/ https://raw.githubusercontent.com/HidoraSwiss/manifest-graylog/master/elasticsearch.repo
+      - yum install elasticsearch -y 
+      - echo 'cluster.name: Graylog/g' >> /etc/elasticsearch/elasticsearch.yml
+      - chkconfig --add elasticsearch
+      - systemctl daemon-reload
+      - systemctl enable elasticsearch.service
+      - systemctl start elasticsearch.service
+      - systemctl restart elasticsearch.service
+    user: root
+    
+  - log: Install and configure Graylog
+  - cmd[centos7]:
+      - rpm -Uvh https://packages.graylog2.org/repo/packages/graylog-2.4-repository_latest.rpm
+      - yum install graylog-server -y
+      - sed -i 's/password_secret =/password_secret =${globals.PASSWORD_SECRET}/g' /etc/graylog/server/server.conf
+      - sed -i 's/root_password_sha2 =/root_password_sha2 =`echo -n toto | sha256sum | awk '{print $1}'`/g' /etc/graylog/server/server.conf
+      - sed -i "81 d" /etc/graylog/server/server.conf
+      - echo "rest_listen_uri = http://${nodes.centos7.extips}:9000/api/" >> /etc/graylog/server/server.conf
+      - echo "web_listen_uri = http://${nodes.centos7.extips}:9000/" >> /etc/graylog/server/server.conf
+      - chkconfig --add graylog-server
+      - systemctl daemon-reload
+      - systemctl enable graylog-server.service
+      - systemctl start graylog-server.service
+      - systemctl stop iptables
+      - systemctl restart graylog-server.service
+    user: root 
+    
+success: |
+  Graylog has been installed on this address : http://${nodes.centos7.extips}:9000.
+  
+  Login : admin
+  
+  Password : ${globals.ROOT_PASSWORD_GRAYLOG}
