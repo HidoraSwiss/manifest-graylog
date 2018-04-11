@@ -1,0 +1,57 @@
+type: update
+version: 1.4
+name: Graylog add-on
+categories: ["apps/dev-and-admin-tools"]
+displayName: Graylog Add-on
+homepage: https://marketplace.graylog.org
+logo: https://raw.githubusercontent.com/HidoraSwiss/manifest-influxdb/master/images/telegraf.png
+description: |
+ Install and configure rsyslog to send syslog into your your Graylog server 
+ 
+settings:
+  fields:
+  - type: string
+    name: GRAYLOG_IP
+    caption: GRAYLOG IP
+    required: true
+    placeholder: 10.10.10.10
+  - type: string
+    name: GRAYLOG_PORT
+    caption: GRAYLOG PORT
+    required: true
+    placeholder: 5000
+  - type: list
+    name: NODE_TYPE
+    caption: Node type
+    default: cp
+    editable: true
+    values:
+      bl: bl
+      cp: cp
+      cache: cache
+      sqldb: sqldb
+      nosqldb: nosqldb
+      storage: storage
+      vps: vps
+      build: build
+      centos7: centos7
+
+onInstall:   
+  - log: Install rsyslog
+  - cmd[${settings.NODE_TYPE}]:
+    - yum install rsyslog -y
+    user: root
+    
+  - log: Configure rsyslog
+  - cmd[${settings.NODE_TYPE}]:
+    - echo "*.*@@${settings.GRAYLOG_IP}:${settings.GRAYLOG_PORT}" >> /etc/rsyslog.conf 
+    user: root
+    
+  - log: restart rsyslog
+  - cmd[${settings.NODE_TYPE}]:
+    - systemctl restart rsyslog
+    user: root
+    
+
+success: |
+  Graylog has been installed and send syslog into ${settings.GRAYLOG_IP}.
