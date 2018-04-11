@@ -4,7 +4,7 @@ name: Graylog Server
 categories: ["apps/dev-and-admin-tools"]
 displayName: Graylog Server
 homepage: https://www.graylog.org/
-logo: https://raw.githubusercontent.com/HidoraSwiss/manifest-graylog/master/images/graylog.png
+logo: none
 description: |
  Install Graylog server 
 
