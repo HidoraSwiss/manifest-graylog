@@ -1,3 +1,4 @@
+
 type: update
 version: 1.4
 name: Graylog add-on
@@ -35,23 +36,26 @@ settings:
       vps: vps
       build: build
       centos7: centos7
+      ubuntu16-04: Ubuntu 16
 
-onInstall:   
+onInstall:     
+  if (settings.NODE_TYPE == 'centos7'):
   - log: Install rsyslog
   - cmd[${settings.NODE_TYPE}]:
-    - yum install rsyslog -y
-    user: root
-    
-  - log: Configure rsyslog
-  - cmd[${settings.NODE_TYPE}]:
+    - yum install -y rsyslog
     - echo "*.*@@${settings.GRAYLOG_IP}:${settings.GRAYLOG_PORT}" >> /etc/rsyslog.conf 
-    user: root
     
+  if (settings.NODE_TYPE == 'ubuntu16-04'):
+  - log: Install rsyslog
+  - cmd[${settings.NODE_TYPE}]:
+    - apt-get install -y rsyslog
+    - echo "*.*@@${settings.GRAYLOG_IP}:${settings.GRAYLOG_PORT}" >> /etc/rsyslog.conf 
+ 
   - log: restart rsyslog
   - cmd[${settings.NODE_TYPE}]:
     - systemctl restart rsyslog
     user: root
-    
+
 
 success: |
   Graylog has been installed and send syslog into ${settings.GRAYLOG_IP}.
