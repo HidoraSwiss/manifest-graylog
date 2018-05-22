@@ -27,35 +27,28 @@ settings:
     default: cp
     editable: true
     values:
-      bl: bl
+      bl: load balancer
       cp: cp
       cache: cache
       sqldb: sqldb
       nosqldb: nosqldb
       storage: storage
-      vps: vps
       build: build
       centos7: centos7
       ubuntu16-04: Ubuntu 16
 
-onInstall:     
-  if (settings.NODE_TYPE == 'centos7'):
-  - log: Install rsyslog
-  - cmd[${settings.NODE_TYPE}]:
-    - yum install -y rsyslog
-    - echo "*.*@@${settings.GRAYLOG_IP}:${settings.GRAYLOG_PORT}" >> /etc/rsyslog.conf 
-    
+onInstall:        
   if (settings.NODE_TYPE == 'ubuntu16-04'):
   - log: Install rsyslog
   - cmd[${settings.NODE_TYPE}]:
     - apt-get install -y rsyslog
     - echo "*.*@@${settings.GRAYLOG_IP}:${settings.GRAYLOG_PORT}" >> /etc/rsyslog.conf 
-    
-  if (settings.NODE_TYPE == 'cp'):
+
+  if (settings.NODE_TYPE != 'ubuntu16-04'):
   - log: Install rsyslog
   - cmd[${settings.NODE_TYPE}]:
     - yum install -y rsyslog
-    - echo "*.*@@${settings.GRAYLOG_IP}:${settings.GRAYLOG_PORT}" >> /etc/rsyslog.conf
+    - echo "*.*@@${settings.GRAYLOG_IP}:${settings.GRAYLOG_PORT}" >> /etc/rsyslog.conf 
     user: root
  
   - log: restart rsyslog
