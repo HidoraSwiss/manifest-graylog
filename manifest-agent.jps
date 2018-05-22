@@ -50,6 +50,13 @@ onInstall:
   - cmd[${settings.NODE_TYPE}]:
     - apt-get install -y rsyslog
     - echo "*.*@@${settings.GRAYLOG_IP}:${settings.GRAYLOG_PORT}" >> /etc/rsyslog.conf 
+    
+  if (settings.NODE_TYPE == 'cp'):
+  - log: Install rsyslog
+  - cmd[${settings.NODE_TYPE}]:
+    - yum install -y rsyslog
+    - echo "*.*@@${settings.GRAYLOG_IP}:${settings.GRAYLOG_PORT}" >> /etc/rsyslog.conf
+    user: root
  
   - log: restart rsyslog
   - cmd[${settings.NODE_TYPE}]:
