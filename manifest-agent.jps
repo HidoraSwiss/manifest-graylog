@@ -35,7 +35,7 @@ settings:
       storage: storage
       build: build
       centos7: centos7
-      ubuntu16-04: Ubuntu 16
+      ubuntu16-04: ubuntu 16
 
 onInstall:        
   if (settings.NODE_TYPE == 'ubuntu16-04'):
