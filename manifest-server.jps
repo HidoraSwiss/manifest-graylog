@@ -67,7 +67,7 @@ onInstall:
 success: |
   Graylog has been installed on this address : http://${nodes.centos7.extips}:9000.
   
-  Use the internal IP address to deploy your agent : ${nodes.centos7.intip}
+  Use the internal IP address to deploy your agent : ${nodes.centos7.intIP}
   
   Login : admin
   
